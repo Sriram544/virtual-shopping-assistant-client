@@ -7,7 +7,7 @@ export default function App() {
     const [chat, setChat] = useState([]);
 
     const handleAsk = async () => {
-        const res = await fetch(\`\${API_BASE}/process-user-input\`, {
+        const res = await fetch(`${API_BASE}/process-user-input`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ userInput: input }),
