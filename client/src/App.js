@@ -35,7 +35,7 @@ export default function App() {
                 {chat.map((item, idx) => (
                     <div key={idx}>
                         <p><strong>You:</strong> {item.user}</p>
-                        <p><strong>AI:</strong> {item.bot.map(p => \`\${p.productName} - $\${p.price}\`).join(", ")}</p>
+                        <p><strong>AI:</strong> {item.bot.map(p => `${p.productName} - $${p.price}`).join(", ")}</p>
                     </div>
                 ))}
             </div>
