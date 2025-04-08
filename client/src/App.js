@@ -1,44 +1,37 @@
 import React, { useState } from "react";
+import Chatbot from "./Chatbot";
+import "./App.css";
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api";
+function App() {
+  const [chatHistory, setChatHistory] = useState([]);
 
-export default function App() {
-    const [input, setInput] = useState("");
-    const [chat, setChat] = useState([]);
+  const handleSend = async (message) => {
+    setChatHistory((prev) => [...prev, { user: message, bot: "Thinking..." }]);
 
-    const handleAsk = async () => {
-        const res = await fetch(`${API_BASE}/process-user-input`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userInput: input }),
-        });
-        const data = await res.json();
-        setChat([...chat, { user: input, bot: data.productSuggestions }]);
-        setInput("");
-    };
+    // Simulate AI response
+    const response = await fetch("https://api.adviceslip.com/advice"); // or your own AI backend
+    const data = await response.json();
+    const botMessage = data.slip.advice;
 
-    return (
-        <div style={{ padding: 20 }}>
-            <h1>Virtual Shopping Assistant</h1>
-            <div style={{ marginBottom: 10 }}>
-                <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask me something..."
-                    style={{ width: "80%", padding: 10 }}
-                />
-                <button onClick={handleAsk} style={{ padding: 10, marginLeft: 10 }}>
-                    Ask
-                </button>
-            </div>
-            <div>
-                {chat.map((item, idx) => (
-                    <div key={idx}>
-                        <p><strong>You:</strong> {item.user}</p>
-                        <p><strong>AI:</strong> {item.bot.map(p => `${p.productName} - $${p.price}`).join(", ")}</p>
-                    </div>
-                ))}
-            </div>
-        </div>
+    setChatHistory((prev) =>
+      prev.map((msg, i) =>
+        i === prev.length - 1 ? { ...msg, bot: botMessage } : msg
+      )
     );
+  };
+
+  return (
+    <div>
+      <h1 style={{ textAlign: "center" }}>🛒 Virtual Shopping Assistant</h1>
+      {chatHistory.map((msg, index) => (
+        <div key={index} style={{ padding: "10px" }}>
+          <p><strong>You:</strong> {msg.user}</p>
+          <p><strong>AI:</strong> {msg.bot}</p>
+        </div>
+      ))}
+      <Chatbot onSend={handleSend} />
+    </div>
+  );
 }
+
+export default App;
